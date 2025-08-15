@@ -17,7 +17,7 @@
     function generarResumen() {
       const texto = document.getElementById("texto").value;
 
-      fetch("https://dc0bb47c93cf.ngrok-free.app/resumir", {
+      fetch("https://41d9885cbcd3.ngrok-free.app/resumir", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -25,7 +25,12 @@
         },
         body: JSON.stringify({ texto: texto })
       })
-      .then(response => response.json())
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+        return response.json();
+      })
       .then(data => {
         document.getElementById("resultado").innerText = data.resumen;
       })
