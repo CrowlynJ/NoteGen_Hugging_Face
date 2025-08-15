@@ -1,96 +1,36 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>NoteGen - Generador de Resúmenes con IA</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 40px;
-            background-color: #f4f4f4;
-        }
-        h1 {
-            color: #333;
-        }
-        textarea {
-            width: 100%;
-            height: 200px;
-            margin-bottom: 20px;
-            padding: 10px;
-            font-size: 16px;
-        }
-        input[type="text"] {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 20px;
-            font-size: 14px;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #0077cc;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #005fa3;
-        }
-        #output {
-            margin-top: 30px;
-            background-color: #fff;
-            padding: 15px;
-            border: 1px solid #ccc;
-            white-space: pre-wrap;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>NoteGen - Generador de Resúmenes</title>
 </head>
 <body>
-    <h1>NoteGen - Generador de Resúmenes con IA</h1>
-    <p>Introduce tu <strong>token de acceso gratuito de Hugging Face</strong>:</p>
-    <input type="text" id="token" placeholder="hf_XXXXXXXXXXXXXXXXXXXXXXXXXXXX">
-    <p>Escribe el texto que deseas resumir:</p>
-    <textarea id="inputText" placeholder="Escribe aquí el texto completo..."></textarea>
-    <button onclick="generateSummary()">Generar resumen</button>
-    <div id="output"></div>
+  <h1>NoteGen - Generador de Resúmenes con IA</h1>
 
-    <script>
-        async function generateSummary() {
-            const token = document.getElementById("token").value.trim();
-            const inputText = document.getElementById("inputText").value.trim();
-            const outputDiv = document.getElementById("output");
+  <textarea id="texto" rows="10" cols="50" placeholder="Escribe el texto que deseas resumir..."></textarea><br><br>
+  <button onclick="generarResumen()">Generar resumen</button>
 
-            if (!token || !inputText) {
-                outputDiv.innerText = "Por favor, ingresa el token y el texto.";
-                return;
-            }
+  <h2>Resumen generado:</h2>
+  <div id="resultado"></div>
 
-            outputDiv.innerText = "Generando resumen...";
+  <script>
+    function generarResumen() {
+      const texto = document.getElementById("texto").value;
 
-            try {
-                const response = await fetch("https://api-inference.huggingface.co/models/facebook/bart-large-cnn", {
-                    method: "POST",
-                    headers: {
-                        "Authorization": `Bearer ${token}`,
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({ inputs: inputText })
-                });
-
-                const result = await response.json();
-
-                if (result.error) {
-                    outputDiv.innerText = "Error: " + result.error;
-                } else if (result[0] && result[0].summary_text) {
-                    outputDiv.innerText = result[0].summary_text;
-                } else {
-                    outputDiv.innerText = "No se pudo generar el resumen.";
-                }
-            } catch (error) {
-                outputDiv.innerText = "Error de conexión: " + error.message;
-            }
-        }
-    </script>
+      fetch("https://87fb18d73c13.ngrok-free.app/resumir", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ texto: texto })
+      })
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById("resultado").innerText = data.resumen;
+      })
+      .catch(error => {
+        console.error("Error al generar resumen:", error);
+        document.getElementById("resultado").innerText = "Ocurrió un error al generar el resumen.";
+      });
+    }
+  </script>
 </body>
 </html>
