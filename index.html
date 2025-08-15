@@ -11,11 +11,13 @@
   <button onclick="generarResumen()">Generar resumen</button>
 
   <h2>Resumen generado:</h2>
-  <div id="resultado"></div>
+  <div id="resultado" style="white-space: pre-wrap; border: 1px solid #ccc; padding: 10px; min-height: 50px;"></div>
 
   <script>
     function generarResumen() {
       const texto = document.getElementById("texto").value;
+      const resultado = document.getElementById("resultado");
+      resultado.innerText = "⏳ Generando resumen...";
 
       fetch("https://41d9885cbcd3.ngrok-free.app/resumir", {
         method: "POST",
@@ -32,11 +34,11 @@
         return response.json();
       })
       .then(data => {
-        document.getElementById("resultado").innerText = data.resumen;
+        resultado.innerText = data.resumen;
       })
       .catch(error => {
         console.error("Error al generar resumen:", error);
-        document.getElementById("resultado").innerText = "Ocurrió un error al generar el resumen.";
+        resultado.innerText = "❌ Ocurrió un error al generar el resumen.";
       });
     }
   </script>
